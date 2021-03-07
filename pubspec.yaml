@@ -31,6 +31,7 @@ dependencies:
   mobx: ^1.2.1+2
   flutter_mobx: ^1.1.0+2
   get_it: ^6.0.0
+  brasil_fields: ^1.0.0
 
 dev_dependencies:
   flutter_test:
