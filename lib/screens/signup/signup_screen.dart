@@ -40,6 +40,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     Observer(builder: (_) {
                       return TextField(
+                        enabled: !signUpStore.loading,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Exemplo: João S.',
@@ -58,6 +59,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     Observer(builder: (_) {
                       return TextField(
+                        enabled: !signUpStore.loading,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Exemplo: joao@gmail.com',
@@ -78,6 +80,7 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     Observer(builder: (_) {
                       return TextField(
+                        enabled: !signUpStore.loading,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: '(99) 99999-99',
@@ -100,13 +103,18 @@ class SignUpScreen extends StatelessWidget {
                       subTitle:
                           'Use letras, números e caracteres especiais. Minimo: 8',
                     ),
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                      ),
-                      obscureText: true,
-                    ),
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signUpStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          errorText: signUpStore.pass1Error,
+                        ),
+                        obscureText: true,
+                        onChanged: signUpStore.setPass1,
+                      );
+                    }),
                     SizedBox(
                       height: 16,
                     ),
@@ -114,27 +122,40 @@ class SignUpScreen extends StatelessWidget {
                       title: 'Confirmar Senha',
                       subTitle: 'Repita a Senha',
                     ),
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                      ),
-                      obscureText: true,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20, bottom: 12),
-                      height: 40,
-                      child: RaisedButton(
-                        color: Colors.orange,
-                        child: Text('Criar Conta'),
-                        textColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signUpStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          errorText: signUpStore.pass2Error,
                         ),
-                        onPressed: () {},
-                      ),
-                    ),
+                        obscureText: true,
+                        onChanged: signUpStore.setPass2,
+                      );
+                    }),
+                    Observer(builder: (_) {
+                      return Container(
+                        margin: EdgeInsets.only(top: 20, bottom: 12),
+                        height: 40,
+                        child: RaisedButton(
+                          color: Colors.orange,
+                          disabledColor: Colors.orange.withAlpha(120),
+                          child: signUpStore.loading
+                              ? CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Colors.white),
+                                )
+                              : Text('Criar Conta'),
+                          textColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          onPressed: signUpStore.signUpPressed,
+                        ),
+                      );
+                    }),
                     Divider(
                       color: Colors.black,
                     ),

@@ -1,11 +1,13 @@
 import 'package:mobx/mobx.dart';
 import 'package:xlo_mobx/helper/extensions.dart';
+import 'package:xlo_mobx/models/user.dart';
+import 'package:xlo_mobx/repositories/user_repository.dart';
 
 part 'signup_store.g.dart';
 
-class SignUpStore = _SignUpStoreBase with _$SignUpStore;
+class SignUpStore = _SignUpStore with _$SignUpStore;
 
-abstract class _SignUpStoreBase with Store {
+abstract class _SignUpStore with Store {
   @observable
   String name;
 
@@ -49,11 +51,68 @@ abstract class _SignUpStoreBase with Store {
   @computed
   bool get phoneValid => phone != null && phone.length >= 14;
   String get phoneError {
-    if (email == null || phoneValid)
+    if (phone == null || phoneValid)
       return null;
     else if (phone.isEmpty)
       return 'Campo Obrigatório';
     else
       return 'Telefone inválido';
+  }
+
+  @observable
+  String pass1;
+
+  @action
+  void setPass1(String value) => pass1 = value;
+
+  @computed
+  bool get pass1Valid => pass1 != null && pass1.length >= 6;
+  String get pass1Error {
+    if (pass1 == null || pass1Valid)
+      return null;
+    else if (pass1.isEmpty)
+      return 'Campo Obrigatório';
+    else
+      return 'Senha inválida';
+  }
+
+  @observable
+  String pass2;
+
+  @action
+  void setPass2(String value) => pass2 = value;
+
+  @computed
+  bool get pass2Valid => pass2 != null && pass2 == pass1;
+  String get pass2Error {
+    if (pass2 == null || pass2Valid)
+      return null;
+    else
+      return 'Senha não correspondem';
+  }
+
+  bool get isFormValid =>
+      nameValid && emailValid && phoneValid && pass1Valid && pass2Valid;
+
+  @computed
+  Function get signUpPressed => isFormValid && !loading ? _signUp : null;
+
+  @observable
+  bool loading = false;
+
+  @action
+  Future<void> _signUp() async {
+    loading = (true);
+
+    final user = User(
+      name: name,
+      email: email,
+      phone: phone,
+      password: pass1,
+    );
+
+    await UserRepository().signUp(user);
+
+    loading = (false);
   }
 }
