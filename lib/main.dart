@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:xlo_mobx/keys/secret.dart';
+import 'package:xlo_mobx/repositories/cep_repository.dart';
+import 'package:xlo_mobx/repositories/ibge_repository.dart';
 import 'package:xlo_mobx/screens/base/base_screen.dart';
 import 'package:xlo_mobx/screens/category/category_screen.dart';
 import 'package:xlo_mobx/stores/category_store.dart';
@@ -13,6 +15,8 @@ void main() async {
   await initializeParse();
   setupLocators();
   runApp(MyApp());
+
+  CepRepository().getAddressFromApi('08.115-100').then((value) => print(value));
 }
 
 void setupLocators() {
