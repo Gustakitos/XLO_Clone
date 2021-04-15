@@ -15,8 +15,6 @@ void main() async {
   await initializeParse();
   setupLocators();
   runApp(MyApp());
-
-  CepRepository().getAddressFromApi('08.115-100').then((value) => print(value));
 }
 
 void setupLocators() {
