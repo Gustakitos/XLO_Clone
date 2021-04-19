@@ -3,10 +3,35 @@ import 'dart:io';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:xlo_mobx/models/ad.dart';
 import 'package:path/path.dart' as path;
+import 'package:xlo_mobx/models/category.dart';
 import 'package:xlo_mobx/repositories/parse_errors.dart';
 import 'package:xlo_mobx/repositories/table_keys.dart';
+import 'package:xlo_mobx/stores/filter_store.dart';
 
 class AdRepository {
+  Future<List<Ad>> getHomeAdList({
+    FilterStore filter,
+    String search,
+    Category category,
+  }) {
+    final queryBuilder = QueryBuilder<ParseObject>(ParseObject(keyAdTable));
+
+    queryBuilder.setLimit(20);
+
+    queryBuilder.whereEqualTo(keyAdStatus, AdStatus.ACTIVE.index);
+
+    if (search != null && search.trim().isNotEmpty) {
+      queryBuilder.whereContains(keyAdTitle, search, caseSensitive: false);
+    }
+
+    if (category != null && category.id != '*') {
+      queryBuilder.whereEqualTo(
+          keyAdCategory,
+          (ParseObject(keyCategoryTable)..set(keyCategoryId, category.id))
+              .toPointer());
+    }
+  }
+
   Future<void> save(Ad ad) async {
     try {
       final parseImages = await saveImages(ad.images);
