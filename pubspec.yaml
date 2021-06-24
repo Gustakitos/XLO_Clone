@@ -38,6 +38,9 @@ dependencies:
   shared_preferences: ^0.5.12+2
   path: ^1.7.0
   cached_network_image: ^2.4.1
+  intl: ^0.17.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
