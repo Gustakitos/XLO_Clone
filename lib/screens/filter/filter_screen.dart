@@ -23,7 +23,7 @@ class FilterScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          elevation: 8,
+          elevation: 0,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
