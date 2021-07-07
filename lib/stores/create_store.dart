@@ -11,6 +11,22 @@ part 'create_store.g.dart';
 class CreateStore = _CreateStoreBase with _$CreateStore;
 
 abstract class _CreateStoreBase with Store {
+  _CreateStoreBase(this.ad) {
+    title = ad.title ?? '';
+    description = ad.description ?? '';
+    images = ad.images.asObservable();
+    category = ad.category;
+    priceText = ad.price?.toStringAsFixed(2) ?? '';
+    hidePhone = ad.hidePhone;
+
+    if (ad.address != null)
+      cepStore = CepStore(ad.address.cep);
+    else
+      cepStore = CepStore(null);
+  }
+
+  final Ad ad;
+
   ObservableList images = ObservableList();
 
   @computed
@@ -91,7 +107,7 @@ abstract class _CreateStoreBase with Store {
   @observable
   bool hidePhone = false;
 
-  CepStore cepStore = CepStore();
+  CepStore cepStore;
 
   @computed
   Address get address => cepStore.address;
@@ -160,7 +176,6 @@ abstract class _CreateStoreBase with Store {
 
   @action
   Future<void> _send() async {
-    final ad = Ad();
     ad.title = title;
     ad.description = description;
     ad.category = category;
