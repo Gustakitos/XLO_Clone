@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:xlo_mobx/components/customDrawer/custom_drawer.dart';
+import 'package:xlo_mobx/components/empty_card.dart';
 import 'package:xlo_mobx/screens/home/components/ad_tile.dart';
 import 'package:xlo_mobx/screens/home/components/create_ad_button.dart';
 import 'package:xlo_mobx/screens/home/components/search_dialog.dart';
@@ -109,31 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     if (homeStore.adList.isEmpty)
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.border_clear,
-                              color: Colors.white,
-                              size: 100,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              'Nenhum anuncio encontrado',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      return EmptyCard('Nenhum anuncio encontrado');
                     else
                       return ListView.builder(
                         controller: scrollController,
