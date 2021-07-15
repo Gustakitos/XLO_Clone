@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:xlo_mobx/components/customDrawer/custom_drawer.dart';
 import 'package:xlo_mobx/screens/edit_account/edit_account_screen.dart';
@@ -34,14 +35,16 @@ class AccountScreen extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            GetIt.I<UserManagerStore>().user.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.purple,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
+                          Observer(builder: (_) {
+                            return Text(
+                              GetIt.I<UserManagerStore>().user.name,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.purple,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            );
+                          }),
                           Text(
                             GetIt.I<UserManagerStore>().user.email,
                             style: TextStyle(
@@ -56,8 +59,11 @@ class AccountScreen extends StatelessWidget {
                       alignment: Alignment.topRight,
                       child: FlatButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => EditAccountScreen()));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EditAccountScreen(),
+                            ),
+                          );
                         },
                         child: Text('EDITAR'),
                         textColor: Colors.purple,

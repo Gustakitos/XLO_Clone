@@ -2,8 +2,10 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:get_it/get_it.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:xlo_mobx/stores/edit_account_store.dart';
+import 'package:xlo_mobx/stores/page_store.dart';
 
 class EditAccountScreen extends StatelessWidget {
   final EditAccountStore store = EditAccountStore();
@@ -29,29 +31,34 @@ class EditAccountScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  LayoutBuilder(
-                    builder: (_, BoxConstraints constraints) {
-                      print(constraints.biggest.width);
-                      print(constraints.maxWidth);
-                      return ToggleSwitch(
-                        minWidth: (constraints.maxWidth.toInt() + 1) / 2,
-                        labels: ['Particular', 'Profissional'],
-                        cornerRadius: 20,
-                        totalSwitches: 2,
-                        activeBgColor: [Colors.purple],
-                        inactiveBgColor: Colors.grey,
-                        activeFgColor: Colors.white,
-                        inactiveFgColor: Colors.white,
-                        initialLabelIndex: 0,
-                        onToggle: store.setUserType,
-                      );
-                    },
-                  ),
+                  Observer(builder: (_) {
+                    return IgnorePointer(
+                      ignoring: store.loading,
+                      child: LayoutBuilder(
+                        builder: (_, BoxConstraints constraints) {
+                          return ToggleSwitch(
+                            minWidth: (constraints.maxWidth.toInt() + 1) / 2,
+                            labels: ['Particular', 'Profissional'],
+                            cornerRadius: 20,
+                            totalSwitches: 2,
+                            activeBgColor: [Colors.purple],
+                            inactiveBgColor: Colors.grey,
+                            activeFgColor: Colors.white,
+                            inactiveFgColor: Colors.white,
+                            initialLabelIndex: store.userType.index,
+                            onToggle: store.setUserType,
+                          );
+                        },
+                      ),
+                    );
+                  }),
                   SizedBox(
                     height: 8,
                   ),
                   Observer(builder: (_) {
                     return TextFormField(
+                      initialValue: store.name,
+                      enabled: !store.loading,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,
@@ -66,7 +73,9 @@ class EditAccountScreen extends StatelessWidget {
                   ),
                   Observer(builder: (_) {
                     return TextFormField(
+                      initialValue: store.phone,
                       onChanged: store.setPhone,
+                      enabled: !store.loading,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,
@@ -83,20 +92,24 @@ class EditAccountScreen extends StatelessWidget {
                   SizedBox(
                     height: 8,
                   ),
-                  TextFormField(
-                    onChanged: store.setPassword,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                      labelText: 'Nova Senha',
-                    ),
-                  ),
+                  Observer(builder: (_) {
+                    return TextFormField(
+                      onChanged: store.setPassword,
+                      enabled: !store.loading,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        labelText: 'Nova Senha',
+                      ),
+                    );
+                  }),
                   SizedBox(
                     height: 8,
                   ),
                   Observer(builder: (_) {
                     return TextFormField(
                       onChanged: store.setPasswordConfirmation,
+                      enabled: !store.loading,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,
@@ -116,10 +129,17 @@ class EditAccountScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         color: Colors.orange,
+                        disabledColor: Colors.orange.withAlpha(100),
                         elevation: 0,
                         textColor: Colors.white,
-                        child: Text('Salvar'),
-                        onPressed: store.isFormValid ? () {} : null,
+                        child: store.loading
+                            ? CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
+                              )
+                            : Text('Salvar'),
+                        onPressed: store.savePressed,
                       ),
                     );
                   }),
@@ -135,8 +155,12 @@ class EditAccountScreen extends StatelessWidget {
                       color: Colors.red,
                       textColor: Colors.white,
                       elevation: 0,
-                      child: Text('Sair'),
-                      onPressed: () {},
+                      child: Text('Log Out'),
+                      onPressed: () {
+                        store.logout();
+                        GetIt.I<PageStore>().setPage(0);
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ),
                 ],
