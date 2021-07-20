@@ -43,6 +43,7 @@ dependencies:
   readmore: ^2.0.1
   url_launcher: ^5.7.10
   toggle_switch: ^1.2.0
+  data_connection_checker: ^0.3.4
   
   flutter_localizations:
     sdk: flutter
